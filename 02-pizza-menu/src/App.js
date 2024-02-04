@@ -1,4 +1,5 @@
 import React from "react";
+import { pizzaData } from "./data";
 
 function Header() {
   return (
@@ -11,15 +12,50 @@ function Header() {
 function Menu() {
   return (
     <main className="menu">
-      <h3>Our Menu</h3>
-      <Pizza />
+      <h2>Our Menu</h2>
+
+      {pizzaData.length > 0 ? (
+        <>
+          <p>
+            Authentic Italian cuisine. 6 creative dishes to choose from. All
+            from our stone oven, all organic, all delicious
+          </p>
+          <ul className="pizzas">
+            {pizzaData.map((pizza, index) => (
+              <Pizza
+                key={index}
+                name={pizza.name}
+                ingredients={pizza.ingredients}
+                photoName={pizza.photoName}
+                price={pizza.price}
+                soldOut={pizza.soldOut}
+              />
+            ))}
+          </ul>
+        </>
+      ) : (
+        <p>We're still working on our menu. Please come back later...</p>
+      )}
     </main>
+  );
+}
+
+function Pizza({ photoName, name, ingredients, price, soldOut }) {
+  return (
+    <li className={`pizza ${soldOut && "sold-out"}`}>
+      <img src={photoName} alt={name} />
+      <div>
+        <h3>{name}</h3>
+        <p>{ingredients}</p>
+        <span>{soldOut ? "SOLD OUT" : price}</span>
+      </div>
+    </li>
   );
 }
 
 function Footer() {
   const hour = new Date().getHours();
-  const openHour = 12,
+  const openHour = 8,
     closeHour = 22;
   const isOpen = hour >= openHour && hour <= closeHour;
 
@@ -31,20 +67,19 @@ function Footer() {
 
   return (
     <footer className="footer">
-      {new Date().toLocaleTimeString()} We're currently open
+      {isOpen ? (
+        <div className="order">
+          <p>We're open until {closeHour}:00. Come visit us or order online</p>
+          <button className="btn">Order</button>
+        </div>
+      ) : (
+        <p>
+          We're happy to welcome you between {openHour}:00 and {closeHour}:00
+        </p>
+      )}
     </footer>
   );
   // return React.createElement("footer", null, "We are currently open!");
-}
-
-function Pizza() {
-  return (
-    <div>
-      <img src="/pizzas/spinaci.jpg" alt="" />
-      <h2>Pizza Spinaci</h2>
-      <p>Tomato, Mozarella, Spinach and Ricotta Cheese</p>
-    </div>
-  );
 }
 
 function App() {
@@ -52,7 +87,6 @@ function App() {
     <div className="container">
       <Header />
       <Menu />
-      <Pizza />
       <Footer />
     </div>
   );
